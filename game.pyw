@@ -77,6 +77,7 @@ class Page:
         self.oldpage = 0
         self.select = -1
         self.font = pygame.font.SysFont('Calibri', 25, True, False)
+        self.speak = pygame.font.SysFont('Calibri', 30, True, False)
         self.leftarrow = pygame.image.load(os.path.join(
             "resource", "leftarrow.png")).convert_alpha()
         self.rightarrow = pygame.image.load(os.path.join(
@@ -88,7 +89,7 @@ class Page:
 class MainMenu(Page):  # TODO: Mainmenu page
     def __init__(self):
         Page.__init__(self)
-        pygame.display.set_caption("Main menu")
+        pygame.display.set_caption("Wonderwild: Main Menu")
         self.select = 0
 
     def run(self):
@@ -127,7 +128,7 @@ class MainMenu(Page):  # TODO: Mainmenu page
 class LevelNo1(Page):  # Finished
     def __init__(self):
         Page.__init__(self)
-        pygame.display.set_caption("Level 1")
+        pygame.display.set_caption("Wonderwild: Level 1")
         self.background_image_1 = pygame.image.load(
             os.path.join("resource", "new2-1.png")).convert()
         self.background_image_2 = pygame.image.load(
@@ -153,6 +154,8 @@ class LevelNo1(Page):  # Finished
 
     def run(self):
         global save
+        text = None
+        texttime = 0
         while not self.done:
             # EVENT PROCESSING STEP
             for event in pygame.event.get():
@@ -167,11 +170,17 @@ class LevelNo1(Page):  # Finished
             # GAME LOGIC STEP
             if self.fire in self.onmap and self.page == 1:
                 if self.mpos[0] > 180:
+                    if self.bucketstate != 3:
+                        text = "I need something to put out fire."
+                        texttime = 120
                     self.mpos = list(self.mpos)
                     self.mpos[0] = 180
                     self.mpos = tuple(self.mpos)
             elif self.page == 1:
                 if self.mpos[0] > 490:
+                    if self.torchstate != 1:
+                        text = "I think I need fire to scare bat."
+                        texttime = 120
                     self.mpos = list(self.mpos)
                     self.mpos[0] = 490
                     self.mpos = tuple(self.mpos)
@@ -208,6 +217,9 @@ class LevelNo1(Page):  # Finished
                             if self.bucketstate != 3:
                                 self.bucketstate += 1
                                 self.sep = False
+                            elif self.bucketstate == 3:
+                                text = "This bucket is full!"
+                                texttime = 60
             elif self.page == 1:
                 if 179 < self.clickpos[0] < 490 and 290 < self.clickpos[1] < 600:
                     if self.fire in self.onmap and self.sep:
@@ -248,6 +260,22 @@ class LevelNo1(Page):  # Finished
                     screen.blit(self.rightarrow_g, (740, 250))
                 else:
                     screen.blit(self.rightarrow, (740, 250))
+            if text:
+                wtext = self.speak.render(text, True, WHITE)
+                btext = self.speak.render(text, True, BLACK)
+                screen.blit(btext, (self.char.x, self.char.y - 52))
+                screen.blit(btext, (self.char.x + 2, self.char.y - 52))
+                screen.blit(btext, (self.char.x + 2, self.char.y - 50))
+                screen.blit(btext, (self.char.x + 2, self.char.y - 48))
+                screen.blit(btext, (self.char.x, self.char.y - 48))
+                screen.blit(btext, (self.char.x - 2, self.char.y - 48))
+                screen.blit(btext, (self.char.x - 2, self.char.y - 50))
+                screen.blit(btext, (self.char.x - 2, self.char.y - 52))
+                # Above is outline
+                screen.blit(wtext, (self.char.x, self.char.y - 50))
+                texttime -= 1
+                if texttime == 0:
+                    text = None
             pygame.display.flip()
             # Set fps
             clock.tick_busy_loop(60)
@@ -272,7 +300,7 @@ class LevelNo1(Page):  # Finished
 class LevelNo2(Page):
     def __init__(self):
         Page.__init__(self)
-        pygame.display.set_caption("Level 2")
+        pygame.display.set_caption("Wonderwild: Level 2")
         self.background_image_1 = pygame.image.load(
             os.path.join("resource", "new3-1.png")).convert()
         self.background_image_2 = pygame.image.load(
@@ -309,6 +337,8 @@ class LevelNo2(Page):
 
     def run(self):
         global save
+        text = None
+        texttime = 0
         while not self.done:
             # EVENT PROCESSING STEP
             for event in pygame.event.get():
@@ -335,6 +365,8 @@ class LevelNo2(Page):
                     self.char.y = 350
             if self.woodstate != 2 and self.page == 1:
                 if self.mpos[0] > 338:
+                    text = "I can't cross this"
+                    texttime = 120
                     self.mpos = list(self.mpos)
                     self.mpos[0] = 338
                     self.mpos = tuple(self.mpos)
@@ -344,6 +376,18 @@ class LevelNo2(Page):
                         self.inventory.remove(self.bridge)
                         self.onmap.add(self.bridge)
                     elif self.bridge not in self.onmap:
+                        if self.rope in self.inventory:
+                            text = "Only rope can't do anything"
+                            texttime = 120
+                        elif self.wood[3] not in self.inventory:
+                            text = "I think some wood can use to cross"
+                            texttime = 120
+                        elif self.wood[3] in self.inventory and self.rope not in self.inventory:
+                            text = "I need something to join stick together"
+                            texttime = 120
+                        else:
+                            text = "I can't cross this"
+                            texttime = 120
                         self.mpos = list(self.mpos)
                         self.mpos[0] = 478
                         self.mpos = tuple(self.mpos)
@@ -352,7 +396,7 @@ class LevelNo2(Page):
                 if 10 < self.clickpos[0] < 60 and 250 < self.clickpos[1] < 350 and self.page != 0:
                     self.page, self.mpos = self.char.transition(
                         self.page, "left", self.mpos, self.complete)
-                elif (740 < self.clickpos[0] < 790 and 250 < self.clickpos[1] < 350 and self.page != 2 and self.bushgrow) or self.complete:
+                elif (740 < self.clickpos[0] < 790 and 250 < self.clickpos[1] < 350 and self.page != 2 and self.bushgrow and (self.page == 0 or self.woodstate == 2)) or self.complete:
                     if self.complete:
                         self.gone, self.mpos = self.char.transition(
                             self.page, "right", self.mpos, self.complete)
@@ -372,8 +416,9 @@ class LevelNo2(Page):
                 if 720 < self.mpos[0] < 790 and 460 < self.mpos[1] < 531:
                     if self.axe in self.onmap:
                         if self.char.pickup((720, 790)):
-                            self.onmap.remove(self.axe)
-                            self.inventory.add(self.axe)
+                            if not self.bushgrow:
+                                self.onmap.remove(self.axe)
+                                self.inventory.add(self.axe)
                 if 270 < self.mpos[0] < 383 and 363 < self.mpos[1] < 505:
                     if self.bucket in self.inventory:
                         if self.char.pickup((270, 383)) and self.sep:
@@ -381,24 +426,34 @@ class LevelNo2(Page):
                                 if self.wellstate != 2:
                                     self.wellstate += 2 / 3
                                 self.bucketstate += 1
-                                self.sep = False
+                            elif self.bucketstate == 3:
+                                text = "This bucket is full!"
+                                texttime = 60
+                            self.sep = False
                 if 485 < self.mpos[0] < 715 and 430 < self.mpos[1] < 525:
-                    if self.bucket in self.inventory and self.bucketstate == 3:
-                        if self.char.pickup((485, 715)):
+                    if self.char.pickup((485, 715)):
+                        if self.bucketstate == 3:
                             self.bucketstate = 0
                             self.bushgrow = True
+                        elif self.bushgrow is False:
+                            text = "I can grow this bush"
+                            texttime = 120
             elif self.page == 1:
                 if 239 < self.mpos[0] < 297 and 134 < self.mpos[1] < 519:
-                    if self.axe in self.inventory:
-                        if self.char.pickup((239, 297)) and self.sep:
+                    if self.char.pickup((239, 297)) and self.sep:
+                        if self.axe in self.inventory:
                             if self.woodstate != 2:
                                 self.woodstate += 1
                             self.sep = False
+                        else:
+                            text = "I need axe to cut this tree"
+                            texttime = 120
                 if 318 < self.mpos[0] < 652 and 472 < self.mpos[1] < 527:
-                    if self.axe in self.inventory:
-                        if self.char.pickup((318, 652)):
+                    if self.char.pickup((318, 652)):
+                        if self.axe in self.inventory:
                             if self.woodstate == 2:
                                 self.inventory.add(self.wood[3])
+
             elif self.page == 2:
                 if 298 < self.mpos[0] < 400 and 515 < self.mpos[1] < 577:
                     if self.rope in self.onmap:
@@ -439,6 +494,22 @@ class LevelNo2(Page):
                     screen.blit(self.rightarrow_g, (740, 250))
                 else:
                     screen.blit(self.rightarrow, (740, 250))
+            if text:
+                wtext = self.speak.render(text, True, WHITE)
+                btext = self.speak.render(text, True, BLACK)
+                screen.blit(btext, (self.char.x, self.char.y - 52))
+                screen.blit(btext, (self.char.x + 2, self.char.y - 52))
+                screen.blit(btext, (self.char.x + 2, self.char.y - 50))
+                screen.blit(btext, (self.char.x + 2, self.char.y - 48))
+                screen.blit(btext, (self.char.x, self.char.y - 48))
+                screen.blit(btext, (self.char.x - 2, self.char.y - 48))
+                screen.blit(btext, (self.char.x - 2, self.char.y - 50))
+                screen.blit(btext, (self.char.x - 2, self.char.y - 52))
+                # Above is outline
+                screen.blit(wtext, (self.char.x, self.char.y - 50))
+                texttime -= 1
+                if texttime == 0:
+                    text = None
             pygame.display.flip()
             # Set fps
             clock.tick_busy_loop(60)
@@ -486,7 +557,7 @@ class LevelNo2(Page):
 pygame.init()
 size = (800, 600)
 screen = pygame.display.set_mode(size)
-pygame.display.set_caption("Loading...")
+pygame.display.set_caption("Wonderwild: Loading...")
 clock = pygame.time.Clock()
 try:
     with open("save", "r+") as file:

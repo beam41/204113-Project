@@ -1,4 +1,4 @@
-# Untitled Game (204113-project)
+# Wonderwild (204113-project)
 
 Final project for 204113 Principle of Computing group 1 (Group คิดไม่ออก)
 
@@ -8,14 +8,14 @@ Chiang Mai University.
 
 ### What we do
 
-This project is point and click puzzle game named **Untitled Game**.
+This project is point and click puzzle game named **Wonderwild**.
 
 ## Getting Started
 
 ### Prerequisites and Build With
 
-* [Python 3.6](https://www.python.org/downloads/) 
-* [Pygame v1.9.3](https://www.python.org/downloads/) 
+* [Python 3.6](https://www.python.org/downloads/)
+* [Pygame v1.9.3](https://www.python.org/downloads/)
 
 ### Run
 
