@@ -4,14 +4,6 @@ import os
 # Colors
 WHITE = (255, 255, 255)
 
-# Initialize
-pygame.init()
-size = (800, 600)
-screen = pygame.display.set_mode(size)
-maindone = False
-pygame.display.set_caption("Loading...")
-clock = pygame.time.Clock()
-
 
 class Character:
     def __init__(self):
@@ -74,8 +66,13 @@ class Character:
 
 class Page:
     def __init__(self):
-        global maindone
         self.done = False
+        self.sep = False
+        self.complete = False
+        self.char = Character()
+        self.mpos = (100, 0)
+        self.clickpos = (-1, -1)
+        self.page = 0
         self.leftarrow = pygame.image.load(os.path.join(
             "resource", "leftarrow.png")).convert_alpha()
         self.rightarrow = pygame.image.load(os.path.join(
@@ -89,9 +86,9 @@ class MainMenu(Page):
         Page.__init__(self)
         pygame.display.set_caption("Main menu")
         self.select = None
-        self.click = (-1, -1)
 
     def run(self):
+        global maindone
         while not self.done:
             # EVENT PROCESSING STEP
             for event in pygame.event.get():
@@ -99,7 +96,7 @@ class MainMenu(Page):
                     self.done = True
                     maindone = True
                 if event.type == pygame.MOUSEBUTTONUP:
-                    self.click = pygame.mouse.get_pos()
+                    self.clickpos = pygame.mouse.get_pos()
                 # Event here
             # GAME LOGIC STEP
             # Logic here
@@ -119,10 +116,6 @@ class LevelNo1(Page):
             os.path.join("resource", "new2-1.png")).convert()
         self.background_image_2 = pygame.image.load(
             os.path.join("resource", "new2-2.png")).convert()
-        self.char = Character()
-        self.mpos = (100, 0)
-        self.clickpos = (-1, -1)
-        self.page = 0
         self.pagelist = (self.draw0, self.draw1)
         self.bucket = (pygame.image.load(os.path.join("resource", "bucket0.png")).convert_alpha(),
                        pygame.image.load(os.path.join("resource", "bucket1.png")).convert_alpha(),
@@ -141,10 +134,9 @@ class LevelNo1(Page):
         self.fire = pygame.image.load(os.path.join("resource", "fire.png")).convert_alpha()
         self.onmap = [self.bat, self.torch, self.water, self.fire]
         self.inventory = [self.bucket]
-        self.sep = False
-        self.complete = False
 
     def run(self):
+        global maindone
         while not self.done:
             # EVENT PROCESSING STEP
             for event in pygame.event.get():
@@ -171,7 +163,6 @@ class LevelNo1(Page):
             if 10 < self.clickpos[0] < 60 and 250 < self.clickpos[1] < 350 and self.page != 0:
                 self.page, self.mpos = self.char.transition(
                     self.page, "left", self.mpos, self.complete)
-                self.sep = False
             elif (740 < self.clickpos[0] < 790 and 250 < self.clickpos[1] < 350 and self.page != 1) or self.complete:
                 if self.complete:
                     self.gone, self.mpos = self.char.transition(
@@ -181,8 +172,6 @@ class LevelNo1(Page):
                 else:
                     self.page, self.mpos = self.char.transition(
                         self.page, "right", self.mpos, self.complete)
-                self.sep = False
-
             else:
                 self.char.moving(self.mpos[0])
             # ***page transition block***
@@ -198,7 +187,6 @@ class LevelNo1(Page):
                         if self.bucketstate != 3:
                             self.bucketstate += 1
                             self.sep = False
-
             if 179 < self.clickpos[0] < 490 and 290 < self.clickpos[1] < 600 and self.page == 1:
                 if self.fire in self.onmap and self.sep:
                     if self.torch in self.inventory and self.torchstate == 0:
@@ -211,14 +199,15 @@ class LevelNo1(Page):
                         self.sep = False
             if 489 < self.mpos[0] < 774 and 250 < self.mpos[1] < 395 and self.page == 1:
                 if self.torch in self.inventory and self.torchstate == 1 and self.sep and self.fire not in self.onmap:
-                    self.batstate = 1
-                    self.batfly = True
+                    if self.char.pickup((489, 774)):
+                        self.batstate = 1
+                        self.batfly = True
             # ***pickup blah blah***
-
             if self.batfly:
                 self.batlo = (self.batlo[0] + 10, self.batlo[1] - 20)
             if self.batlo[0] > 820:
                 self.complete = True
+                maindone[0] = 1
             # DRAWING STEP
             # look weird but it works (draw current page)
             self.pagelist[self.page]()
@@ -241,7 +230,7 @@ class LevelNo1(Page):
             # Set fps
             clock.tick_busy_loop(60)
 
-    # game page change
+    # game page
     def draw0(self):
         screen.blit(self.background_image_1, (0, 0))
         for i in self.onmap:
@@ -261,11 +250,32 @@ class LevelNo1(Page):
                 screen.blit(self.fire, (200, 290))
 
 
+# Initialize
+pygame.init()
+size = (800, 600)
+screen = pygame.display.set_mode(size)
+pygame.display.set_caption("Loading...")
+clock = pygame.time.Clock()
+try:
+    with open("save", "r+") as file:
+        if not file.read():
+            file.write("0\n0\n0\n0\n0")
+    with open("save", "r+") as file:
+        a = file.readlines()
+        maindone = [int(x.rstrip("\n")) for x in a]
+        print(maindone)
+except FileNotFoundError:
+    with open("save", "w") as file:
+        file.write("0\n0\n0\n0\n0")
+
+
 def main():  # TODO: global logic of game still figure how to make stage change
     global maindone
-    if not maindone:
+    if True:
         lvl1 = LevelNo1()
         lvl1.run()
+    with open("save", "w") as file:
+        file.write("\n".join(map(str, maindone)))
 
 
 main()
