@@ -1,5 +1,6 @@
 import pygame
 import os
+from math import sin, cos, atan2
 
 # Colors
 WHITE = (255, 255, 255)
@@ -297,7 +298,7 @@ class LevelNo1(Page):  # Finished
             screen.blit(self.fire, (200, 290))
 
 
-class LevelNo2(Page):
+class LevelNo2(Page):  # Finished
     def __init__(self):
         Page.__init__(self)
         pygame.display.set_caption("Wonderwild: Level 2")
@@ -553,11 +554,212 @@ class LevelNo2(Page):
             screen.blit(ropy, (300, 510))
 
 
+class LevelNo3(Page):
+    def __init__(self):
+        Page.__init__(self)
+        pygame.display.set_caption("Wonderwild: Level 1")
+        self.background_image_1 = pygame.image.load(
+            os.path.join("resource", "new1-1.png")).convert()
+        self.fox = (pygame.image.load(os.path.join("resource", "fox1.png")).convert_alpha(),
+                    pygame.image.load(os.path.join("resource", "fox2.png")).convert_alpha(),
+                    pygame.image.load(os.path.join("resource", "fox3.png")).convert_alpha(),
+                    pygame.image.load(os.path.join("resource", "fox4.png")).convert_alpha(),
+                    pygame.image.load(os.path.join("resource", "fox5.png")).convert_alpha(),
+                    pygame.image.load(os.path.join("resource", "fox6.png")).convert_alpha(),
+                    pygame.image.load(os.path.join("resource", "fox7.png")).convert_alpha(),
+                    pygame.image.load(os.path.join("resource", "fox8.png")).convert_alpha(),
+                    pygame.image.load(os.path.join("resource", "fox9.png")).convert_alpha())
+        self.foxanimation = 0
+        self.stone = (pygame.image.load(os.path.join("resource", "stone1.png")).convert_alpha(),
+                      pygame.image.load(os.path.join("resource", "stone2.png")).convert_alpha(),
+                      pygame.image.load(os.path.join("resource", "stone3.png")).convert_alpha())
+        self.tree = (pygame.image.load(os.path.join("resource", "tree1.png")).convert_alpha(),
+                     pygame.image.load(os.path.join("resource", "tree2.png")).convert_alpha(),
+                     pygame.image.load(os.path.join("resource", "tree3.png")).convert_alpha(),
+                     pygame.image.load(os.path.join("resource", "tree4.png")).convert_alpha())
+        self.treeanimation = 0
+        self.axe = pygame.image.load(os.path.join("resource", "axe2.png")).convert_alpha()
+        self.bird = pygame.image.load(os.path.join("resource", "bird.png")).convert_alpha()
+        self.wood2 = pygame.image.load(os.path.join("resource", "wood2.png")).convert_alpha()
+        self.birdfall = False
+        self.rockthrow = False
+        self.rock_x = 0
+        self.rock_y = 0
+        self.bird_x = 420
+        self.bird_y = 233
+        self.bird_rotate = 0
+        self.foxgo = False
+        self.fox_x = 550
+        self.treefall = pygame.USEREVENT + 1
+        self.finished = pygame.USEREVENT + 2
+        self.clickable = True
+        self.onmap = {self.axe, self.stone[2], self.fox}
+        self.inventory = set()
+
+    def run(self):
+        global save
+        text = None
+        texttime = 0
+        speed = 0
+        gravity = 9.8 / 2
+        while not self.done:
+            # EVENT PROCESSING STEP
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.done = True
+                    self.select = -2
+                if event.type == pygame.MOUSEBUTTONDOWN and self.clickable:
+                    self.sep = True
+                elif event.type == pygame.MOUSEBUTTONUP and self.clickable:  # heart of click based game
+                    self.clickpos = pygame.mouse.get_pos()
+                    if 462 < self.clickpos[0] < 491 and 242 < self.clickpos[1] < 299 and self.stone[2] in self.inventory:
+                        self.rockthrow = True
+                    else:
+                        self.mpos = pygame.mouse.get_pos()
+                if event.type == self.treefall:
+                    if self.treeanimation != 3:
+                        self.treeanimation += 1
+                if event.type == self.finished:  # when finished
+                    self.complete = True
+                    self.select = 3
+            # GAME LOGIC STEP
+            if not self.foxgo or self.treeanimation != 3:
+                if self.mpos[0] > 500:
+                    text = "Fox is in my way."
+                    texttime = 120
+                    self.mpos = list(self.mpos)
+                    self.mpos[0] = 500
+                    self.mpos = tuple(self.mpos)
+            else:
+                if self.fox in self.onmap:
+                    self.onmap.remove(self.fox)
+                if self.clickable:
+                    pygame.time.set_timer(self.finished, 500)
+                save[2] = 1
+                self.clickable = False
+            if self.foxgo:
+                if self.fox_x != self.bird_x - 80:
+                    self.fox_x -= 10
+                    self.foxanimation += 8 / 11
+            elif self.birdfall:
+                if self.bird_y < 450:
+                    self.bird_x += 10
+                    self.bird_rotate -= 9
+                    self.bird_y += speed
+                    speed += gravity
+                else:
+                    self.foxgo = True
+            elif self.rockthrow:
+                if self.stone[2] in self.inventory:
+                    self.inventory.remove(self.stone[2])
+                    self.rock_x = self.char.x + 75
+                    self.rock_y = self.char.y + 75
+                    tangent = atan2(self.clickpos[1] - self.rock_y, self.clickpos[0] - self.rock_x)
+                self.rock_x += cos(tangent) * 30
+                self.rock_y += sin(tangent) * 30
+            if 462 < self.rock_x < 491 and 242 < self.rock_y < 299:
+                self.birdfall = True
+            # ***page transition block***
+            if self.page == self.oldpage:
+                if self.complete:
+                    self.gone, self.mpos = self.char.transition(
+                        self.page, "right", self.mpos, self.complete)
+                    if self.gone is True:
+                        self.done = True
+                else:
+                    self.char.moving(self.mpos[0])
+            else:
+                self.clickpos = (-1, -1)
+                self.oldpage = self.page
+            # ***page transition block***
+            # ***pickup blah blah***
+            if 174 < self.mpos[0] < 252 and 387 < self.mpos[1] < 440:
+                if self.char.pickup((174, 252)):
+                    if self.axe in self.onmap:
+                        self.onmap.remove(self.axe)
+                        self.inventory.add(self.axe)
+            if 59 < self.mpos[0] < 164 and 461 < self.mpos[1] < 497:
+                if self.char.pickup((59, 164)):
+                    if self.stone[2] in self.onmap:
+                        self.onmap.remove(self.stone[2])
+                        self.inventory.add(self.stone[2])
+            if 369 < self.mpos[0] < 404 and 380 < self.mpos[1] < 468:
+                if self.char.pickup((369, 404)) and self.sep:
+                    if self.axe in self.inventory:
+                        pygame.time.set_timer(self.treefall, 20)
+                    else:
+                        text = "I can cut tree with axe"
+                        texttime = 120
+            if 462 < self.mpos[0] < 491 and 242 < self.mpos[1] < 299:
+                if self.char.pickup((462, 491)) and not self.birdfall:
+                    text = "This bird doesn't have wings"
+                    texttime = 120
+            # ***pickup blah blah***
+            # DRAWING STEP
+            self.draw0()
+            self.char.drawing()
+            if self.axe in self.inventory:
+                axy = pygame.transform.scale(self.axe, (150, 113))
+                screen.blit(axy, (-10, 0))
+            if self.stone[2] in self.inventory:
+                screen.blit(self.stone[2], (150, 25))
+            if self.complete:
+                screen.blit(self.rightarrow_g, (740, 250))
+            if text:
+                wtext = self.speak.render(text, True, WHITE)
+                btext = self.speak.render(text, True, BLACK)
+                screen.blit(btext, (self.char.x, self.char.y - 52))
+                screen.blit(btext, (self.char.x + 2, self.char.y - 52))
+                screen.blit(btext, (self.char.x + 2, self.char.y - 50))
+                screen.blit(btext, (self.char.x + 2, self.char.y - 48))
+                screen.blit(btext, (self.char.x, self.char.y - 48))
+                screen.blit(btext, (self.char.x - 2, self.char.y - 48))
+                screen.blit(btext, (self.char.x - 2, self.char.y - 50))
+                screen.blit(btext, (self.char.x - 2, self.char.y - 52))
+                # Above is outline
+                screen.blit(wtext, (self.char.x, self.char.y - 50))
+                texttime -= 1
+                if texttime == 0:
+                    text = None
+            pygame.display.flip()
+            # Set fps
+            clock.tick_busy_loop(60)
+        return self.select
+
+    # game page
+    def draw0(self):
+        screen.blit(self.background_image_1, (0, 0))
+        woody = pygame.transform.scale(self.wood2, (200, 120))
+        screen.blit(woody, (100, 400))
+        if self.stone[2] in self.onmap:
+            stony = pygame.transform.scale(self.stone[0], (250, 188))
+        else:
+            stony = pygame.transform.scale(self.stone[1], (250, 188))
+        screen.blit(stony, (-10, 370))
+        if self.treeanimation != 3:
+            screen.blit(self.tree[self.treeanimation], (120, 15))
+        if self.axe in self.onmap:
+            axy = pygame.transform.scale(self.axe, (150, 111))
+            screen.blit(axy, (130, 357))
+        if self.rockthrow and not self.birdfall:
+            rocky = pygame.transform.scale(self.stone[2], (20, 15))
+            screen.blit(rocky, (self.rock_x, self.rock_y))
+        if self.treeanimation == 0 or self.birdfall:
+            birdy = pygame.transform.scale(self.bird, (100, 75))
+            birdy = pygame.transform.rotate(birdy, self.bird_rotate)
+            screen.blit(birdy, (self.bird_x, self.bird_y))
+        if self.treeanimation == 3:
+            screen.blit(self.tree[self.treeanimation], (120, 15))
+        if self.fox in self.onmap:
+            foxy = pygame.transform.scale(self.fox[int(self.foxanimation)], (600, 450))
+            screen.blit(foxy, (self.fox_x, 200))
+
+
 # Initialize
 pygame.init()
 size = (800, 600)
 screen = pygame.display.set_mode(size)
-pygame.display.set_caption("Wonderwild: Loading...")
+pygame.display.set_caption("Wonderwild")
 clock = pygame.time.Clock()
 try:
     with open("save", "r+") as file:
