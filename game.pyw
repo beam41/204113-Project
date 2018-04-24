@@ -1,6 +1,7 @@
 import pygame
 import os
 from math import sin, cos, atan2
+from random import choice
 
 # Colors
 WHITE = (255, 255, 255)
@@ -94,6 +95,7 @@ class MainMenu(Page):  # TODO: Mainmenu page
         self.select = 0
 
     def run(self):
+        global bgswitch
         global save
         while not self.done:
             self.clickpos = pygame.mouse.get_pos()
@@ -109,6 +111,14 @@ class MainMenu(Page):  # TODO: Mainmenu page
                         self.select += 1
                     elif 250 < self.clickpos[0] < 350 and 310 < self.clickpos[1] < 410:
                         self.done = True
+                if event.type == pygame.constants.USEREVENT:
+                    if bgswitch:
+                        pygame.mixer.music.load(os.path.join("resource", "sound-bg1.mp3"))
+                        bgswitch = False
+                    else:
+                        pygame.mixer.music.load(os.path.join("resource", "sound-bg2.mp3"))
+                        bgswitch = True
+                    pygame.mixer.music.play()
                 # Event here
             # GAME LOGIC STEP
             # Logic here
@@ -155,8 +165,10 @@ class LevelNo1(Page):  # Finished
 
     def run(self):
         global save
+        global bgswitch
         text = None
         texttime = 0
+        pygame.mixer.music.unpause()
         while not self.done:
             # EVENT PROCESSING STEP
             for event in pygame.event.get():
@@ -168,6 +180,14 @@ class LevelNo1(Page):  # Finished
                 elif event.type == pygame.MOUSEBUTTONUP:  # heart of click based game
                     self.mpos = pygame.mouse.get_pos()
                     self.clickpos = pygame.mouse.get_pos()
+                if event.type == pygame.constants.USEREVENT:
+                    if bgswitch:
+                        pygame.mixer.music.load(os.path.join("resource", "sound-bg1.mp3"))
+                        bgswitch = False
+                    else:
+                        pygame.mixer.music.load(os.path.join("resource", "sound-bg2.mp3"))
+                        bgswitch = True
+                    pygame.mixer.music.play()
             # GAME LOGIC STEP
             if self.fire in self.onmap and self.page == 1:
                 if self.mpos[0] > 180:
@@ -212,12 +232,16 @@ class LevelNo1(Page):  # Finished
                         if self.char.pickup((175, 280)):
                             self.onmap.remove(self.torch)
                             self.inventory.add(self.torch)
+                            click_sound = pygame.mixer.Sound(os.path.join("resource", "soundpickup2.ogg"))
+                            click_sound.play()
                 elif 559 < self.mpos[0] < 647 and 450 < self.mpos[1] < 568:
                     if self.bucket in self.inventory:
                         if self.char.pickup((559, 647)) and self.sep:
                             if self.bucketstate != 3:
                                 self.bucketstate += 1
                                 self.sep = False
+                                click_sound = pygame.mixer.Sound(os.path.join("resource", "soundpickup1.ogg"))
+                                click_sound.play()
                             elif self.bucketstate == 3:
                                 text = "This bucket is full!"
                                 texttime = 60
@@ -228,10 +252,14 @@ class LevelNo1(Page):  # Finished
                             if self.char.pickup((179, 490)):
                                 self.torchstate = 1
                                 self.sep = False
+                                click_sound = pygame.mixer.Sound(os.path.join("resource", "soundpickup1.ogg"))
+                                click_sound.play()
                         elif self.bucket in self.inventory and self.bucketstate == 3:
                             self.onmap.remove(self.fire)
                             self.bucketstate = 0
                             self.sep = False
+                            click_sound = pygame.mixer.Sound(os.path.join("resource", "soundpickup1.ogg"))
+                            click_sound.play()
                 elif 489 < self.mpos[0] < 774 and 250 < self.mpos[1] < 395:
                     if self.torch in self.inventory and self.torchstate == 1 and self.sep and self.fire not in self.onmap:
                         if self.char.pickup((489, 774)):
@@ -241,6 +269,9 @@ class LevelNo1(Page):  # Finished
             if self.batfly:
                 self.batlo = (self.batlo[0] + 10, self.batlo[1] - 20)
             if self.batlo[0] > 820:  # game complete
+                pygame.mixer.music.pause()
+                click_sound = pygame.mixer.Sound(os.path.join("resource", "soundcomplete.wav"))
+                click_sound.play()
                 self.complete = True
                 save[0] = 1
                 self.select = 1
@@ -338,8 +369,10 @@ class LevelNo2(Page):  # Finished
 
     def run(self):
         global save
+        global bgswitch
         text = None
         texttime = 0
+        pygame.mixer.music.unpause()
         while not self.done:
             # EVENT PROCESSING STEP
             for event in pygame.event.get():
@@ -351,6 +384,14 @@ class LevelNo2(Page):  # Finished
                 elif event.type == pygame.MOUSEBUTTONUP:  # heart of click based game
                     self.mpos = pygame.mouse.get_pos()
                     self.clickpos = pygame.mouse.get_pos()
+                if event.type == pygame.constants.USEREVENT:
+                    if bgswitch:
+                        pygame.mixer.music.load(os.path.join("resource", "sound-bg1.mp3"))
+                        bgswitch = False
+                    else:
+                        pygame.mixer.music.load(os.path.join("resource", "sound-bg2.mp3"))
+                        bgswitch = True
+                    pygame.mixer.music.play()
             # GAME LOGIC STEP
             if self.bushgrow:
                 if self.page == 0:
@@ -467,6 +508,7 @@ class LevelNo2(Page):  # Finished
                 self.inventory.remove(self.rope)
                 self.inventory.add(self.bridge)
             if self.bridge in self.onmap:   # game complete
+                pygame.mixer.music.pause()
                 self.complete = True
                 save[1] = 1
                 self.select = 2
@@ -598,10 +640,12 @@ class LevelNo3(Page):
 
     def run(self):
         global save
+        global bgswitch
         text = None
         texttime = 0
         speed = 0
         gravity = 9.8 / 2
+        pygame.mixer.music.unpause()
         while not self.done:
             # EVENT PROCESSING STEP
             for event in pygame.event.get():
@@ -616,6 +660,14 @@ class LevelNo3(Page):
                         self.rockthrow = True
                     else:
                         self.mpos = pygame.mouse.get_pos()
+                if event.type == pygame.constants.USEREVENT:
+                    if bgswitch:
+                        pygame.mixer.music.load(os.path.join("resource", "sound-bg1.mp3"))
+                        bgswitch = False
+                    else:
+                        pygame.mixer.music.load(os.path.join("resource", "sound-bg2.mp3"))
+                        bgswitch = True
+                    pygame.mixer.music.play()
                 if event.type == self.treefall:
                     if self.treeanimation != 3:
                         self.treeanimation += 1
@@ -630,11 +682,12 @@ class LevelNo3(Page):
                     self.mpos = list(self.mpos)
                     self.mpos[0] = 500
                     self.mpos = tuple(self.mpos)
-            else:
+            else:  # other finised
                 if self.fox in self.onmap:
                     self.onmap.remove(self.fox)
                 if self.clickable:
                     pygame.time.set_timer(self.finished, 500)
+                pygame.mixer.music.pause()
                 save[2] = 1
                 self.clickable = False
             if self.foxgo:
@@ -761,6 +814,7 @@ size = (800, 600)
 screen = pygame.display.set_mode(size)
 pygame.display.set_caption("Wonderwild")
 clock = pygame.time.Clock()
+
 try:
     with open("save", "r+") as file:
         if not file.read():
@@ -771,6 +825,11 @@ try:
 except FileNotFoundError:
     with open("save", "w") as file:
         file.write("0\n0\n0\n0\n0")
+
+bgswitch = False
+pygame.mixer.music.load(os.path.join("resource", "sound-start.mp3"))
+pygame.mixer.music.set_endevent(pygame.constants.USEREVENT)
+pygame.mixer.music.play()
 
 
 def main():  # global level selection logic
