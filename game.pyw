@@ -1,7 +1,6 @@
 import pygame
-import os
+from os.path import join
 from math import sin, cos, atan2, radians
-from random import choice
 
 # Colors
 WHITE = (255, 255, 255)
@@ -39,7 +38,7 @@ class Character:
             self.frame += 1
             if self.frame == 4:
                 self.frame = 2
-        player_image = pygame.image.load(os.path.join(
+        player_image = pygame.image.load(join(
             "resource", "user%i-%s.png" % (self.frame, self.turn))).convert_alpha()
         player_image = pygame.transform.scale(player_image, (125, 181))
         screen.blit(player_image, (self.x, self.y))
@@ -82,15 +81,15 @@ class Page:
         self.font15 = pygame.font.SysFont('Calibri', 15, True, False)
         self.font25 = pygame.font.SysFont('Calibri', 25, True, False)
         self.speak = pygame.font.SysFont('Calibri', 30, True, False)
-        self.home = pygame.image.load(os.path.join(
+        self.home = pygame.image.load(join(
             "resource", "home.png")).convert_alpha()
-        self.restart = pygame.image.load(os.path.join(
+        self.restart = pygame.image.load(join(
             "resource", "restart.png")).convert_alpha()
-        self.leftarrow = pygame.image.load(os.path.join(
+        self.leftarrow = pygame.image.load(join(
             "resource", "leftarrow.png")).convert_alpha()
-        self.rightarrow = pygame.image.load(os.path.join(
+        self.rightarrow = pygame.image.load(join(
             "resource", "rightarrow.png")).convert_alpha()
-        self.rightarrow_g = pygame.image.load(os.path.join(
+        self.rightarrow_g = pygame.image.load(join(
             "resource", "rightarrow_g.png")).convert_alpha()
 
 
@@ -98,7 +97,7 @@ class MainMenu(Page):
     def __init__(self):
         Page.__init__(self)
         self.background_image_1 = pygame.image.load(
-            os.path.join("resource", "menu.png")).convert()
+            join("resource", "menu.png")).convert()
         self.select = 0
 
     def run(self):
@@ -119,17 +118,17 @@ class MainMenu(Page):
                         self.select += 1
                     elif 302 < self.clickpos[0] < 546 and 379 < self.clickpos[1] < 469:  # play
                         self.done = True
-                        click_sound = pygame.mixer.Sound(os.path.join("resource", "soundpickup2.ogg"))
+                        click_sound = pygame.mixer.Sound(join("resource", "soundpickup2.ogg"))
                         click_sound.play()
                     elif 338 < self.clickpos[0] < 510 and 485 < self.clickpos[1] < 553:  # exit
                         self.done = True
                         self.select = -2
                 if event.type == pygame.constants.USEREVENT:
                     if bgswitch:
-                        pygame.mixer.music.load(os.path.join("resource", "sound-bg1.mp3"))
+                        pygame.mixer.music.load(join("resource", "sound-bg1.mp3"))
                         bgswitch = False
                     else:
-                        pygame.mixer.music.load(os.path.join("resource", "sound-bg2.mp3"))
+                        pygame.mixer.music.load(join("resource", "sound-bg2.mp3"))
                         bgswitch = True
                     pygame.mixer.music.play()
                 # Event here
@@ -156,28 +155,28 @@ class LevelNo1(Page):
     def __init__(self):
         Page.__init__(self)
         self.background_image_1 = pygame.image.load(
-            os.path.join("resource", "new1-1.png")).convert()
-        self.fox = (pygame.image.load(os.path.join("resource", "fox1.png")).convert_alpha(),
-                    pygame.image.load(os.path.join("resource", "fox2.png")).convert_alpha(),
-                    pygame.image.load(os.path.join("resource", "fox3.png")).convert_alpha(),
-                    pygame.image.load(os.path.join("resource", "fox4.png")).convert_alpha(),
-                    pygame.image.load(os.path.join("resource", "fox5.png")).convert_alpha(),
-                    pygame.image.load(os.path.join("resource", "fox6.png")).convert_alpha(),
-                    pygame.image.load(os.path.join("resource", "fox7.png")).convert_alpha(),
-                    pygame.image.load(os.path.join("resource", "fox8.png")).convert_alpha(),
-                    pygame.image.load(os.path.join("resource", "fox9.png")).convert_alpha())
+            join("resource", "new1-1.png")).convert()
+        self.fox = (pygame.image.load(join("resource", "fox1.png")).convert_alpha(),
+                    pygame.image.load(join("resource", "fox2.png")).convert_alpha(),
+                    pygame.image.load(join("resource", "fox3.png")).convert_alpha(),
+                    pygame.image.load(join("resource", "fox4.png")).convert_alpha(),
+                    pygame.image.load(join("resource", "fox5.png")).convert_alpha(),
+                    pygame.image.load(join("resource", "fox6.png")).convert_alpha(),
+                    pygame.image.load(join("resource", "fox7.png")).convert_alpha(),
+                    pygame.image.load(join("resource", "fox8.png")).convert_alpha(),
+                    pygame.image.load(join("resource", "fox9.png")).convert_alpha())
         self.foxanimation = 0
-        self.stone = (pygame.image.load(os.path.join("resource", "stone1.png")).convert_alpha(),
-                      pygame.image.load(os.path.join("resource", "stone2.png")).convert_alpha(),
-                      pygame.image.load(os.path.join("resource", "stone3.png")).convert_alpha())
-        self.tree = (pygame.image.load(os.path.join("resource", "tree1.png")).convert_alpha(),
-                     pygame.image.load(os.path.join("resource", "tree2.png")).convert_alpha(),
-                     pygame.image.load(os.path.join("resource", "tree3.png")).convert_alpha(),
-                     pygame.image.load(os.path.join("resource", "tree4.png")).convert_alpha())
+        self.stone = (pygame.image.load(join("resource", "stone1.png")).convert_alpha(),
+                      pygame.image.load(join("resource", "stone2.png")).convert_alpha(),
+                      pygame.image.load(join("resource", "stone3.png")).convert_alpha())
+        self.tree = (pygame.image.load(join("resource", "tree1.png")).convert_alpha(),
+                     pygame.image.load(join("resource", "tree2.png")).convert_alpha(),
+                     pygame.image.load(join("resource", "tree3.png")).convert_alpha(),
+                     pygame.image.load(join("resource", "tree4.png")).convert_alpha())
         self.treeanimation = 0
-        self.axe = pygame.image.load(os.path.join("resource", "axe2.png")).convert_alpha()
-        self.bird = pygame.image.load(os.path.join("resource", "bird.png")).convert_alpha()
-        self.wood2 = pygame.image.load(os.path.join("resource", "wood2.png")).convert_alpha()
+        self.axe = pygame.image.load(join("resource", "axe2.png")).convert_alpha()
+        self.bird = pygame.image.load(join("resource", "bird.png")).convert_alpha()
+        self.wood2 = pygame.image.load(join("resource", "wood2.png")).convert_alpha()
         self.birdfall = False
         self.rockthrow = False
         self.rock_x = 0
@@ -218,10 +217,10 @@ class LevelNo1(Page):
                         self.mpos = pygame.mouse.get_pos()
                 if event.type == pygame.constants.USEREVENT:
                     if bgswitch:
-                        pygame.mixer.music.load(os.path.join("resource", "sound-bg1.mp3"))
+                        pygame.mixer.music.load(join("resource", "sound-bg1.mp3"))
                         bgswitch = False
                     else:
-                        pygame.mixer.music.load(os.path.join("resource", "sound-bg2.mp3"))
+                        pygame.mixer.music.load(join("resource", "sound-bg2.mp3"))
                         bgswitch = True
                     pygame.mixer.music.play()
                 if event.type == self.treefall:
@@ -253,7 +252,7 @@ class LevelNo1(Page):
                     pygame.time.set_timer(self.finished, 500)
                     if not self.soundplay:
                         pygame.mixer.music.pause()
-                        click_sound = pygame.mixer.Sound(os.path.join("resource", "soundcomplete.wav"))
+                        click_sound = pygame.mixer.Sound(join("resource", "soundcomplete.wav"))
                         click_sound.play()
                         self.soundplay = True
                 save[0] = 1
@@ -384,39 +383,39 @@ class LevelNo2(Page):
     def __init__(self):
         Page.__init__(self)
         self.background_image_1 = pygame.image.load(
-            os.path.join("resource", "new4-1.png")).convert()
-        self.hive = pygame.image.load(os.path.join("resource", "hivetree.png")).convert_alpha()
-        self.bamboo = (pygame.image.load(os.path.join("resource", "bb1.png")).convert_alpha(),
-                       pygame.image.load(os.path.join("resource", "bb2.png")).convert_alpha(),
-                       pygame.image.load(os.path.join("resource", "bb3.png")).convert_alpha(),
-                       pygame.image.load(os.path.join("resource", "bb4.png")).convert_alpha(),
-                       pygame.image.load(os.path.join("resource", "bb5.png")).convert_alpha(),
-                       pygame.image.load(os.path.join("resource", "bb6.png")).convert_alpha(),
-                       pygame.image.load(os.path.join("resource", "bb7.png")).convert_alpha(),
-                       pygame.image.load(os.path.join("resource", "bb8.png")).convert_alpha(),
-                       pygame.image.load(os.path.join("resource", "bb9.png")).convert_alpha(),
-                       pygame.image.load(os.path.join("resource", "bb10.png")).convert_alpha(),
-                       pygame.image.load(os.path.join("resource", "bb11.png")).convert_alpha(),
-                       pygame.image.load(os.path.join("resource", "bb12.png")).convert_alpha(),
-                       pygame.image.load(os.path.join("resource", "bb13.png")).convert_alpha())
+            join("resource", "new4-1.png")).convert()
+        self.hive = pygame.image.load(join("resource", "hivetree.png")).convert_alpha()
+        self.bamboo = (pygame.image.load(join("resource", "bb1.png")).convert_alpha(),
+                       pygame.image.load(join("resource", "bb2.png")).convert_alpha(),
+                       pygame.image.load(join("resource", "bb3.png")).convert_alpha(),
+                       pygame.image.load(join("resource", "bb4.png")).convert_alpha(),
+                       pygame.image.load(join("resource", "bb5.png")).convert_alpha(),
+                       pygame.image.load(join("resource", "bb6.png")).convert_alpha(),
+                       pygame.image.load(join("resource", "bb7.png")).convert_alpha(),
+                       pygame.image.load(join("resource", "bb8.png")).convert_alpha(),
+                       pygame.image.load(join("resource", "bb9.png")).convert_alpha(),
+                       pygame.image.load(join("resource", "bb10.png")).convert_alpha(),
+                       pygame.image.load(join("resource", "bb11.png")).convert_alpha(),
+                       pygame.image.load(join("resource", "bb12.png")).convert_alpha(),
+                       pygame.image.load(join("resource", "bb13.png")).convert_alpha())
         self.bamboostate = 0
-        self.log = (pygame.image.load(os.path.join("resource", "log0.png")).convert_alpha(),
-                    pygame.image.load(os.path.join("resource", "log1.png")).convert_alpha(),
-                    pygame.image.load(os.path.join("resource", "log2.png")).convert_alpha(),
-                    pygame.image.load(os.path.join("resource", "log3.png")).convert_alpha(),
-                    pygame.image.load(os.path.join("resource", "log4.png")).convert_alpha(),
-                    pygame.image.load(os.path.join("resource", "log5.png")).convert_alpha(),
-                    pygame.image.load(os.path.join("resource", "log6.png")).convert_alpha())
+        self.log = (pygame.image.load(join("resource", "log0.png")).convert_alpha(),
+                    pygame.image.load(join("resource", "log1.png")).convert_alpha(),
+                    pygame.image.load(join("resource", "log2.png")).convert_alpha(),
+                    pygame.image.load(join("resource", "log3.png")).convert_alpha(),
+                    pygame.image.load(join("resource", "log4.png")).convert_alpha(),
+                    pygame.image.load(join("resource", "log5.png")).convert_alpha(),
+                    pygame.image.load(join("resource", "log6.png")).convert_alpha())
         self.logstate = 0
-        self.bush = (pygame.image.load(os.path.join("resource", "1bush.png")).convert_alpha(),
-                     pygame.image.load(os.path.join("resource", "1bush1.png")).convert_alpha())
-        self.axe = pygame.image.load(os.path.join("resource", "axe2.png")).convert_alpha()
-        self.wood2 = pygame.image.load(os.path.join("resource", "wood2.png")).convert_alpha()
-        self.rope = pygame.image.load(os.path.join("resource", "1rope.png")).convert_alpha()
-        self.lighter = pygame.image.load(os.path.join("resource", "lighter.png")).convert_alpha()
-        self.ladder = pygame.image.load(os.path.join("resource", "ladder.png")).convert_alpha()
-        self.bee = pygame.image.load(os.path.join("resource", "bee.png")).convert_alpha()
-        self.torch = pygame.image.load(os.path.join("resource", "1torch.png")).convert_alpha()
+        self.bush = (pygame.image.load(join("resource", "1bush.png")).convert_alpha(),
+                     pygame.image.load(join("resource", "1bush1.png")).convert_alpha())
+        self.axe = pygame.image.load(join("resource", "axe2.png")).convert_alpha()
+        self.wood2 = pygame.image.load(join("resource", "wood2.png")).convert_alpha()
+        self.rope = pygame.image.load(join("resource", "1rope.png")).convert_alpha()
+        self.lighter = pygame.image.load(join("resource", "lighter.png")).convert_alpha()
+        self.ladder = pygame.image.load(join("resource", "ladder.png")).convert_alpha()
+        self.bee = pygame.image.load(join("resource", "bee.png")).convert_alpha()
+        self.torch = pygame.image.load(join("resource", "1torch.png")).convert_alpha()
         self.bee_x = 635
         self.bee_y = 270
         self.clickable = True
@@ -447,10 +446,10 @@ class LevelNo2(Page):
                     self.mpos = pygame.mouse.get_pos()
                 if event.type == pygame.constants.USEREVENT:
                     if bgswitch:
-                        pygame.mixer.music.load(os.path.join("resource", "sound-bg1.mp3"))
+                        pygame.mixer.music.load(join("resource", "sound-bg1.mp3"))
                         bgswitch = False
                     else:
-                        pygame.mixer.music.load(os.path.join("resource", "sound-bg2.mp3"))
+                        pygame.mixer.music.load(join("resource", "sound-bg2.mp3"))
                         bgswitch = True
                     pygame.mixer.music.play()
             # GAME LOGIC STEP
@@ -537,7 +536,7 @@ class LevelNo2(Page):
                     if self.bee_x > 802:
                         if not self.soundplay:
                             pygame.mixer.music.pause()
-                            click_sound = pygame.mixer.Sound(os.path.join("resource", "soundcomplete.wav"))
+                            click_sound = pygame.mixer.Sound(join("resource", "soundcomplete.wav"))
                             click_sound.play()
                             self.soundplay = True
                         self.mpos = list(self.mpos)
@@ -647,29 +646,29 @@ class LevelNo2(Page):
         screen.blit(self.bee, (self.bee_x, self.bee_y))
 
 
-class LevelNo3(Page):  # Finished
+class LevelNo3(Page):
     def __init__(self):
         Page.__init__(self)
         self.background_image_1 = pygame.image.load(
-            os.path.join("resource", "new2-1.png")).convert()
+            join("resource", "new2-1.png")).convert()
         self.background_image_2 = pygame.image.load(
-            os.path.join("resource", "new2-2.png")).convert()
+            join("resource", "new2-2.png")).convert()
         self.pagelist = (self.draw0, self.draw1)
-        self.bucket = (pygame.image.load(os.path.join("resource", "bucket0.png")).convert_alpha(),
-                       pygame.image.load(os.path.join("resource", "bucket1.png")).convert_alpha(),
-                       pygame.image.load(os.path.join("resource", "bucket2.png")).convert_alpha(),
-                       pygame.image.load(os.path.join("resource", "bucket3.png")).convert_alpha())
+        self.bucket = (pygame.image.load(join("resource", "bucket0.png")).convert_alpha(),
+                       pygame.image.load(join("resource", "bucket1.png")).convert_alpha(),
+                       pygame.image.load(join("resource", "bucket2.png")).convert_alpha(),
+                       pygame.image.load(join("resource", "bucket3.png")).convert_alpha())
         self.bucketstate = 0
-        self.bat = (pygame.image.load(os.path.join("resource", "bat-l.png")).convert_alpha(),
-                    pygame.image.load(os.path.join("resource", "bat-r.png")).convert_alpha())
+        self.bat = (pygame.image.load(join("resource", "bat-l.png")).convert_alpha(),
+                    pygame.image.load(join("resource", "bat-r.png")).convert_alpha())
         self.batstate = 0
         self.batlo = (550, 250)
         self.batfly = False
-        self.torch = (pygame.image.load(os.path.join("resource", "torch-o.png")).convert_alpha(),
-                      pygame.image.load(os.path.join("resource", "torch-l.png")).convert_alpha())
+        self.torch = (pygame.image.load(join("resource", "torch-o.png")).convert_alpha(),
+                      pygame.image.load(join("resource", "torch-l.png")).convert_alpha())
         self.torchstate = 0
-        self.water = pygame.image.load(os.path.join("resource", "water.png")).convert_alpha()
-        self.fire = pygame.image.load(os.path.join("resource", "fire.png")).convert_alpha()
+        self.water = pygame.image.load(join("resource", "water.png")).convert_alpha()
+        self.fire = pygame.image.load(join("resource", "fire.png")).convert_alpha()
         self.onmap = {self.torch, self.fire}
         self.inventory = {self.bucket}
 
@@ -693,10 +692,10 @@ class LevelNo3(Page):  # Finished
                     self.clickpos = pygame.mouse.get_pos()
                 if event.type == pygame.constants.USEREVENT:
                     if bgswitch:
-                        pygame.mixer.music.load(os.path.join("resource", "sound-bg1.mp3"))
+                        pygame.mixer.music.load(join("resource", "sound-bg1.mp3"))
                         bgswitch = False
                     else:
-                        pygame.mixer.music.load(os.path.join("resource", "sound-bg2.mp3"))
+                        pygame.mixer.music.load(join("resource", "sound-bg2.mp3"))
                         bgswitch = True
                     pygame.mixer.music.play()
             # GAME LOGIC STEP
@@ -782,7 +781,7 @@ class LevelNo3(Page):  # Finished
             if self.batlo[0] > 820:  # game complete
                 if not self.soundplay:
                     pygame.mixer.music.pause()
-                    click_sound = pygame.mixer.Sound(os.path.join("resource", "soundcomplete.wav"))
+                    click_sound = pygame.mixer.Sound(join("resource", "soundcomplete.wav"))
                     click_sound.play()
                     self.soundplay = True
                 self.complete = True
@@ -846,40 +845,40 @@ class LevelNo3(Page):  # Finished
             screen.blit(self.fire, (200, 290))
 
 
-class LevelNo4(Page):  # Finished
+class LevelNo4(Page):
     def __init__(self):
         Page.__init__(self)
         self.background_image_1 = pygame.image.load(
-            os.path.join("resource", "new3-1.png")).convert()
+            join("resource", "new3-1.png")).convert()
         self.background_image_2 = pygame.image.load(
-            os.path.join("resource", "new3-2.png")).convert()
+            join("resource", "new3-2.png")).convert()
         self.background_image_3 = pygame.image.load(
-            os.path.join("resource", "new3-3.png")).convert()
+            join("resource", "new3-3.png")).convert()
         self.pagelist = (self.draw0, self.draw1, self.draw2)
-        self.bucket = (pygame.image.load(os.path.join("resource", "bucket0.png")).convert_alpha(),
-                       pygame.image.load(os.path.join("resource", "bucket1.png")).convert_alpha(),
-                       pygame.image.load(os.path.join("resource", "bucket2.png")).convert_alpha(),
-                       pygame.image.load(os.path.join("resource", "bucket3.png")).convert_alpha())
+        self.bucket = (pygame.image.load(join("resource", "bucket0.png")).convert_alpha(),
+                       pygame.image.load(join("resource", "bucket1.png")).convert_alpha(),
+                       pygame.image.load(join("resource", "bucket2.png")).convert_alpha(),
+                       pygame.image.load(join("resource", "bucket3.png")).convert_alpha())
         self.bucketstate = 0
-        self.walkway = (pygame.image.load(os.path.join("resource", "walkway-a.png")).convert_alpha(),
-                        pygame.image.load(os.path.join("resource", "walkway-e.png")).convert_alpha(),
-                        pygame.image.load(os.path.join("resource", "walkway-up.png")).convert_alpha(),
-                        pygame.image.load(os.path.join("resource", "walkway-down.png")).convert_alpha())
-        self.well = (pygame.image.load(os.path.join("resource", "well-0.png")).convert_alpha(),
-                     pygame.image.load(os.path.join("resource", "well-1.png")).convert_alpha(),
-                     pygame.image.load(os.path.join("resource", "well-2.png")).convert_alpha())
+        self.walkway = (pygame.image.load(join("resource", "walkway-a.png")).convert_alpha(),
+                        pygame.image.load(join("resource", "walkway-e.png")).convert_alpha(),
+                        pygame.image.load(join("resource", "walkway-up.png")).convert_alpha(),
+                        pygame.image.load(join("resource", "walkway-down.png")).convert_alpha())
+        self.well = (pygame.image.load(join("resource", "well-0.png")).convert_alpha(),
+                     pygame.image.load(join("resource", "well-1.png")).convert_alpha(),
+                     pygame.image.load(join("resource", "well-2.png")).convert_alpha())
         self.wellstate = 0
-        self.bush = (pygame.image.load(os.path.join("resource", "bush.png")).convert_alpha(),
-                     pygame.image.load(os.path.join("resource", "bush-h.png")).convert_alpha())
+        self.bush = (pygame.image.load(join("resource", "bush.png")).convert_alpha(),
+                     pygame.image.load(join("resource", "bush-h.png")).convert_alpha())
         self.bushgrow = False
-        self.wood = (pygame.image.load(os.path.join("resource", "wood.png")).convert_alpha(),
-                     pygame.image.load(os.path.join("resource", "wood-a.png")).convert_alpha(),
-                     pygame.image.load(os.path.join("resource", "wood-b.png")).convert_alpha(),
-                     pygame.image.load(os.path.join("resource", "wood-c.png")).convert_alpha())
+        self.wood = (pygame.image.load(join("resource", "wood.png")).convert_alpha(),
+                     pygame.image.load(join("resource", "wood-a.png")).convert_alpha(),
+                     pygame.image.load(join("resource", "wood-b.png")).convert_alpha(),
+                     pygame.image.load(join("resource", "wood-c.png")).convert_alpha())
         self.woodstate = 0
-        self.axe = pygame.image.load(os.path.join("resource", "axe.png")).convert_alpha()
-        self.bridge = pygame.image.load(os.path.join("resource", "bridge.png")).convert_alpha()
-        self.rope = pygame.image.load(os.path.join("resource", "rope.png")).convert_alpha()
+        self.axe = pygame.image.load(join("resource", "axe.png")).convert_alpha()
+        self.bridge = pygame.image.load(join("resource", "bridge.png")).convert_alpha()
+        self.rope = pygame.image.load(join("resource", "rope.png")).convert_alpha()
         self.onmap = {self.axe, self.rope}
         self.inventory = {self.bucket}
 
@@ -903,10 +902,10 @@ class LevelNo4(Page):  # Finished
                     self.clickpos = pygame.mouse.get_pos()
                 if event.type == pygame.constants.USEREVENT:
                     if bgswitch:
-                        pygame.mixer.music.load(os.path.join("resource", "sound-bg1.mp3"))
+                        pygame.mixer.music.load(join("resource", "sound-bg1.mp3"))
                         bgswitch = False
                     else:
-                        pygame.mixer.music.load(os.path.join("resource", "sound-bg2.mp3"))
+                        pygame.mixer.music.load(join("resource", "sound-bg2.mp3"))
                         bgswitch = True
                     pygame.mixer.music.play()
             # GAME LOGIC STEP
@@ -1128,14 +1127,14 @@ class Complete(Page):
     def __init__(self):
         Page.__init__(self)
         self.background_image_1 = pygame.image.load(
-            os.path.join("resource", "es.png")).convert()
+            join("resource", "es.png")).convert()
         self.select = -1
 
     def run(self):
         pygame.display.set_caption("Wonderwild: Main Menu")
         global save
         pygame.mixer.music.stop()
-        ss = pygame.mixer.Sound(os.path.join("resource", "soundescaped.ogg"))
+        ss = pygame.mixer.Sound(join("resource", "soundescaped.ogg"))
         ss.play()
         while not self.done:
             self.clickpos = pygame.mouse.get_pos()
@@ -1159,7 +1158,7 @@ pygame.init()
 size = (800, 600)
 screen = pygame.display.set_mode(size)
 pygame.display.set_caption("Wonderwild: Loading...")
-icon = pygame.image.load(os.path.join("resource", "dd.png")).convert_alpha()
+icon = pygame.image.load(join("resource", "dd.png")).convert_alpha()
 pygame.display.set_icon(icon)
 clock = pygame.time.Clock()
 
@@ -1180,7 +1179,7 @@ bgswitch = False
 def main():  # global level selection logic
     global save
     select = -1
-    pygame.mixer.music.load(os.path.join("resource", "sound-start.mp3"))
+    pygame.mixer.music.load(join("resource", "sound-start.mp3"))
     pygame.mixer.music.set_endevent(pygame.constants.USEREVENT)
     pygame.mixer.music.play()
     while select != -2:
