@@ -19,9 +19,9 @@ This project is point and click puzzle game named **Wonderwild**.
 
 ### Run
 
-Open **game.pyw**
+Open `game.pyw`
 
-or run **game.pyw** through command-line interface with
+or run `game.pyw` through command-line interface with
 
 ```
 python game.pyw
